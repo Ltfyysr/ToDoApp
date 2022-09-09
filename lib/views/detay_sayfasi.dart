@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:todo_app/cubit/yapilacaklar_detay_cubit.dart';
 import 'package:todo_app/model/yapilacaklar.dart';
 
 class DetaySayfasi extends StatefulWidget {
@@ -13,9 +15,7 @@ class DetaySayfasi extends StatefulWidget {
 class _DetaySayfasiState extends State<DetaySayfasi> {
   var tfIsKontrol=TextEditingController();
 
-  Future<void> guncelle(String yapilacak_is) async{
-    print("iş guncelle: $yapilacak_is");
-  }
+
   @override
   void initState() {
     super.initState();
@@ -36,7 +36,7 @@ class _DetaySayfasiState extends State<DetaySayfasi> {
             children: [
               TextField(controller: tfIsKontrol,decoration: InputDecoration(hintText: tfIsKontrol.text),),
               ElevatedButton(onPressed: (){
-                guncelle(tfIsKontrol.text);
+                context.read<YapilacaklarDetayCubit>().guncelle(tfIsKontrol.text,widget.yapilacak.yapilacak_id);
               }, child: const Text("GÜNCELLE")),
             ],
           ),

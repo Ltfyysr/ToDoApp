@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:todo_app/cubit/yapilacaklar_kayit_cubit.dart';
 
 
 class KayitSayfasi extends StatefulWidget {
@@ -11,9 +13,6 @@ class KayitSayfasi extends StatefulWidget {
 class _YapilacakIsKayitState extends State<KayitSayfasi> {
   var tfIsKontrol = TextEditingController();
 
-  Future<void> kayit(String yapilacak_is) async{
-    print(("İş kayıt: $yapilacak_is"));
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +31,7 @@ class _YapilacakIsKayitState extends State<KayitSayfasi> {
                 decoration: InputDecoration(hintText: "Yapılacak İş"),
               ),
               ElevatedButton(
-                  onPressed: () { kayit(tfIsKontrol.text); },
+                  onPressed: () { context.read<YapilacaklarKayitCubit>().kayit(tfIsKontrol.text); },
                   child: const Text("KAYDET")),
             ],
           ),

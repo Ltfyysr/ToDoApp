@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:todo_app/anasayfa.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:todo_app/cubit/anasayfa_cubit.dart';
+import 'package:todo_app/cubit/yapilacaklar_detay_cubit.dart';
+import 'package:todo_app/cubit/yapilacaklar_kayit_cubit.dart';
+import 'package:todo_app/views/anasayfa.dart';
 
 
 void main() {
@@ -11,16 +15,23 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        appBarTheme: const AppBarTheme(
-          elevation: 0,
-          backgroundColor: Colors.blue,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context)=> AnasayfaCubit()),
+        BlocProvider(create: (context)=> YapilacaklarKayitCubit()),
+        BlocProvider(create: (context)=> YapilacaklarDetayCubit()),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          appBarTheme: const AppBarTheme(
+            elevation: 0,
+            backgroundColor: Colors.blue,
+          ),
         ),
+        home: const Anasayfa(),
       ),
-      home: const Anasayfa(),
     );
   }
 }

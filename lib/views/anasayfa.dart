@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:todo_app/detay_sayfasi.dart';
-import 'package:todo_app/kayit_sayfasi.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:todo_app/cubit/anasayfa_cubit.dart';
+import 'package:todo_app/views/detay_sayfasi.dart';
+import 'package:todo_app/views/kayit_sayfasi.dart';
 import 'package:todo_app/model/yapilacaklar.dart';
 
 class Anasayfa extends StatefulWidget {
@@ -13,13 +15,10 @@ class Anasayfa extends StatefulWidget {
 class _AnasayfaState extends State<Anasayfa> {
   bool aramaYapiliyorMu = false;
 
-  Future<List<Yapilacaklar>> yapilacaklariGoster() async {
-    var yapilacaklarListesi = <Yapilacaklar>[];
-    var y1 = Yapilacaklar(yapilacak_id: 1, yapilacak_is: "Ekmek Al");
-    var y2 = Yapilacaklar(yapilacak_id: 2, yapilacak_is: "Fatura Öde");
-    yapilacaklarListesi.add(y1);
-    yapilacaklarListesi.add(y2);
-    return yapilacaklarListesi;
+  @override
+  void initState() {
+    super.initState();
+    context.read<AnasayfaCubit>().yapilacaklariYukle();
   }
 
   @override
@@ -29,27 +28,26 @@ class _AnasayfaState extends State<Anasayfa> {
         title:  aramaYapiliyorMu ?
         TextField(decoration: const InputDecoration(hintText: "Ara"),
           onChanged: (aramaSonucu){
-            print("Not ara: $aramaSonucu");
+            context.read<AnasayfaCubit>().ara(aramaSonucu);
           },) : const Text("Yapılacaklar"),
         actions: [
           aramaYapiliyorMu ?
           IconButton(onPressed: () {
             setState((){aramaYapiliyorMu= false;});
+            context.read<AnasayfaCubit>().yapilacaklariYukle();
           }, icon: Icon(Icons.clear)):
               IconButton(onPressed: (){
                 setState((){aramaYapiliyorMu=true;});
               }, icon: Icon(Icons.search_rounded))
         ],
       ),
-      body: FutureBuilder<List<Yapilacaklar>>(
-        future: yapilacaklariGoster(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            var yapilacaklarlistesi = snapshot.data;
+      body: BlocBuilder<AnasayfaCubit,List<Yapilacaklar>>(
+        builder: (context, yapilacaklarListesi) {
+          if (yapilacaklarListesi.isNotEmpty) {
             return ListView.builder(
-              itemCount: yapilacaklarlistesi!.length,
+              itemCount: yapilacaklarListesi.length,
               itemBuilder: (context, indeks) {
-                var yapilacak = yapilacaklarlistesi[indeks];
+                var yapilacak = yapilacaklarListesi[indeks];
                 return GestureDetector(
                   onTap: () {
                     Navigator.push(
@@ -57,7 +55,9 @@ class _AnasayfaState extends State<Anasayfa> {
                         MaterialPageRoute(
                             builder: (context) => DetaySayfasi(
                                   yapilacak: yapilacak,
-                                )));
+                                ))).then((value){
+                                  context.read<AnasayfaCubit>().yapilacaklariYukle();
+                    });
                   },
                   child: Card(
                     child: Row(
@@ -74,7 +74,9 @@ class _AnasayfaState extends State<Anasayfa> {
                                       content: Text(
                                 "${yapilacak.yapilacak_is} silinsin mi?"
                               ),
-                                  action: SnackBarAction(label: "Evet", onPressed: (){})));
+                                  action: SnackBarAction(label: "Evet", onPressed: (){
+                                    context.read<AnasayfaCubit>().sil(yapilacak.yapilacak_id);
+                                  })));
                             },
                             icon: Icon(Icons.delete_outline_outlined,color: Colors.black54,))
                       ],
@@ -91,7 +93,9 @@ class _AnasayfaState extends State<Anasayfa> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
-              context, MaterialPageRoute(builder: (context) => KayitSayfasi()));
+              context, MaterialPageRoute(builder: (context) => KayitSayfasi())).then((value) {
+                context.read<AnasayfaCubit>().yapilacaklariYukle();
+          });
         },
         child: Icon(Icons.add),
       ),
