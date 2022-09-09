@@ -86,7 +86,7 @@ class _AnasayfaState extends State<Anasayfa> {
               },
             );
           } else {
-            return Center();
+            return const Center();
           }
         },
       ),
@@ -97,7 +97,7 @@ class _AnasayfaState extends State<Anasayfa> {
                 context.read<AnasayfaCubit>().yapilacaklariYukle();
           });
         },
-        child: Icon(Icons.add),
+        child:const Icon(Icons.add),
       ),
     );
   }

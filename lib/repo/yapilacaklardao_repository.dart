@@ -1,35 +1,55 @@
 import 'package:todo_app/model/yapilacaklar.dart';
+import 'package:todo_app/sqlite/veritabani_yardimcisi.dart';
 
-class YapilacaklarDaoRepository{//ortak repo olusturduk
+class YapilacaklarDaoRepository {//ortak repo olusturduk
 
-  //liste olusturma
-  Future<List<Yapilacaklar>> tumYapilacaklariAl() async{
-      var yapilacaklarListesi = <Yapilacaklar>[];
-      var y1 = Yapilacaklar(yapilacak_id: 1, yapilacak_is: "Ekmek Al");
-      var y2 = Yapilacaklar(yapilacak_id: 2, yapilacak_is: "Fatura Öde");
-      yapilacaklarListesi.add(y1);
-      yapilacaklarListesi.add(y2);
-      return yapilacaklarListesi;
+  Future<void> yapilacaklarKayit(String yapilacak_is) async {
+    var db = await VeritabaniYardimcisi.veritabaniErisim();
+    var bilgi = Map<String, dynamic>();
+    bilgi["yapilacak_is"] = yapilacak_is;
+    await db.insert("yapilacaklar", bilgi);
   }
 
-  Future<List<Yapilacaklar>> yapilacakAra(String aramaKelimesi) async{
-    var yapilacaklarListesi = <Yapilacaklar>[];
-    var y1 = Yapilacaklar(yapilacak_id: 1, yapilacak_is: "Ekmek Al");
-    yapilacaklarListesi.add(y1);
+  Future<List<Yapilacaklar>> tumYapilacaklariAl() async {
+    var db =
+        await VeritabaniYardimcisi.veritabaniErisim(); //veritabanına erisim
+    List<Map<String, dynamic>> maps =
+        await db.rawQuery("SELECT * FROM yapilacaklar");
 
-    return yapilacaklarListesi;
+    return List.generate(maps.length, (index) {
+      var satir = maps[index];
+      return Yapilacaklar(
+          yapilacak_id: satir["yapilacak_id"],
+          yapilacak_is: satir["yapilacak_is"]);
+    });
   }
 
-  Future<void> yapilacakSil(int yapilacak_id) async{
-    print("Yapılacak iş sil: $yapilacak_id");
+  Future<List<Yapilacaklar>> yapilacakAra(String aramaKelimesi) async {
+    var db = await VeritabaniYardimcisi.veritabaniErisim();
+    List<Map<String, dynamic>> maps = await db.rawQuery(
+        "SELECT * FROM yapilacaklar WHERE yapilacak_is like '%$aramaKelimesi%'");
+
+    return List.generate(maps.length, (index) {
+      var satir = maps[index];
+      return Yapilacaklar(
+          yapilacak_id: satir["yapilacak_id"],
+          yapilacak_is: satir["yapilacak_is"]);
+    });
   }
 
-   Future<void> yapilacaklarKayit(String yapilacak_is) async{
-     print("İş kayıt: $yapilacak_is");
-   }
-
-  Future<void> yapilacakGuncelle(String yapilacak_is,int yapilacak_id) async{
-    print("Yapılacak iş guncelle: $yapilacak_id");
+  Future<void> yapilacakSil(int yapilacak_id) async {
+    var db = await VeritabaniYardimcisi.veritabaniErisim();
+    await db.delete("yapilacaklar",
+        where: "yapilacak_id = ?", whereArgs: [yapilacak_id]);
   }
 
+
+
+  Future<void> yapilacakGuncelle(String yapilacak_is, int yapilacak_id) async {
+    var db = await VeritabaniYardimcisi.veritabaniErisim();
+    var bilgi = Map<String, dynamic>();
+    bilgi["yapilacak_is"] = yapilacak_is;
+    await db.update("yapilacaklar", bilgi,
+        where: "yapilacak_id = ?", whereArgs: [yapilacak_id]);
+  }
 }
