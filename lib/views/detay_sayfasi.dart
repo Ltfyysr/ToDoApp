@@ -37,7 +37,7 @@ class _DetaySayfasiState extends State<DetaySayfasi> {
               TextField(controller: tfIsKontrol,decoration: InputDecoration(hintText: tfIsKontrol.text),),
               ElevatedButton(onPressed: (){
                 context.read<YapilacaklarDetayCubit>().guncelle(tfIsKontrol.text,widget.yapilacak.yapilacak_id);
-              }, child: const Text("GÜNCELLE")),
+              }, child: const Text("GÜNCELLE"),style: ElevatedButton.styleFrom(primary: Color(0xFF798E93)),),
             ],
           ),
         ),

@@ -60,6 +60,9 @@ class _AnasayfaState extends State<Anasayfa> {
                     });
                   },
                   child: Card(
+                    color: Color(0xFFFBEAEB),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                    shadowColor: Colors.white38,
                     child: Row(
                       children: [
                         Padding(
@@ -98,6 +101,7 @@ class _AnasayfaState extends State<Anasayfa> {
           });
         },
         child:const Icon(Icons.add),
+        backgroundColor: Color(0xFF798E93),
       ),
     );
   }

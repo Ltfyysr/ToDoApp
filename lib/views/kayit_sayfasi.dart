@@ -32,7 +32,7 @@ class _YapilacakIsKayitState extends State<KayitSayfasi> {
               ),
               ElevatedButton(
                   onPressed: () { context.read<YapilacaklarKayitCubit>().kayit(tfIsKontrol.text); },
-                  child: const Text("KAYDET")),
+                  child: const Text("KAYDET"),style: ElevatedButton.styleFrom(primary: Color(0xFF798E93)),),
             ],
           ),
         ),
